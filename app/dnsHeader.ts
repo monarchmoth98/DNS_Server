@@ -47,7 +47,7 @@ export class DnsHeader {
 		byte |= this.responseCode << 0;
 
 		console.log("BYTE Data: " + byte);
-		header.writeUint8(byte, 2);
+		header.writeUint16BE(byte, 2);
 
 		header.writeUint16BE(this.questionCount, 4);
 
