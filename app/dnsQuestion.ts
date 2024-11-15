@@ -61,9 +61,9 @@ export class DnsQuestion {
 				continue;
 			}
 			question.writeUintBE(tokens[i].length, offset, 1);
-			question.write(tokens[i], offset + 1);
-			offset += 1 + tokens[i].length;
-			console.log(question.toString());
+			offset++;
+			question.write(tokens[i], offset);
+			offset += tokens[i].length;
 		}
 
 		question.writeUInt16BE(this.type, offset);

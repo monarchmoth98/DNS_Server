@@ -23,11 +23,10 @@ udpSocket.on("message", (data: Buffer, remoteAddr: dgram.RemoteInfo) => {
 		const encodedHeader: Buffer = header.encode();
 		const encodedQuestion: Buffer = question.encode();
 
-		const finalBuffer = Buffer.concat([new Uint8Array(encodedHeader), new Uint8Array(encodedQuestion), new Uint8Array(Buffer.alloc(512 - 12 - encodedQuestion.length))]);
-		console.log('Length of final buffer: ', finalBuffer.length);
+		const finalBuffer = Buffer.concat([new Uint8Array(encodedHeader), new Uint8Array(encodedQuestion)]);
 		const response = new Uint8Array(finalBuffer);
 
-		console.log(response);
+		console.log("Response: ", response);
 		udpSocket.send(response, remoteAddr.port, remoteAddr.address);
 	} catch (e) {
 		console.log(`Error sending data: ${e}`);
