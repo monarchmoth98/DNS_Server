@@ -23,9 +23,8 @@ udpSocket.on("message", (data: Buffer, remoteAddr: dgram.RemoteInfo) => {
 		const encodedHeader: Buffer = header.encode();
 		const encodedQuestion: Buffer = question.encode();
 
-		console.log(encodedQuestion);
-		console.log(encodedQuestion.toString())
-		const finalBuffer = Buffer.concat([new Uint8Array(encodedHeader), new Uint8Array(encodedQuestion)]);
+		const finalBuffer = Buffer.concat([new Uint8Array(encodedHeader), new Uint8Array(encodedQuestion), new Uint8Array(Buffer.alloc(512 - 12 - encodedQuestion.length))]);
+		console.log('Length of final buffer: ', finalBuffer.length);
 		const response = new Uint8Array(finalBuffer);
 
 		console.log(response);
