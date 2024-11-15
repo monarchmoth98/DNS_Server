@@ -41,11 +41,13 @@ export class DnsQuestion {
 		// encode the name
 		const tokens: string[] = this.name.split(/(\.)/);
 		console.log(tokens);
-		let totalLength = 1 + tokens.length;
+		const totalLength = 1 + tokens.reduce((acc, token) => {
+			if (token === ".") {
+				return acc + 1;
+			}
+			return acc + token.length + 1;
+		}, 0);
 
-		for (let i = 0; i < tokens.length; i++) {
-			totalLength += tokens[i].length;
-		}
 		const question = Buffer.alloc(totalLength + 4);
 
 		this.type = Type.A;
