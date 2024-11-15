@@ -46,7 +46,6 @@ export class DnsQuestion {
 			}
 			return acc + token.length + 1;
 		}, 0);
-		console.log('total length of Buffer for Question section: ', totalLength);
 
 		const question = Buffer.alloc(totalLength);
 
