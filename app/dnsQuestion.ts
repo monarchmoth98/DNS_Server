@@ -39,11 +39,8 @@ export class DnsQuestion {
 	public encode(): Buffer {
 
 		// encode the name
-		const tokens: string[] = this.name.split(/(\.)/);
+		const tokens: string[] = this.name.split('.');
 		const totalLength = 1 + 4 + tokens.reduce((acc, token) => {
-			if (token === ".") {
-				return acc + 1;
-			}
 			return acc + token.length + 1;
 		}, 0);
 
@@ -54,19 +51,14 @@ export class DnsQuestion {
 
 		let offset = 0;
 		for (let i = 0; i < tokens.length; i++) {
-			if (tokens[i] === '.') {
-				question.write(tokens[i], offset);
-				offset++;
-				continue;
-			}
 			question.writeUintBE(tokens[i].length, offset, 1);
 			offset++;
 			question.write(tokens[i], offset);
 			offset += tokens[i].length;
 		}
 
-		question.writeUInt16BE(this.type, offset);
-		question.writeUInt16BE(this.class, offset + 2);
+		question.writeUInt16BE(this.type, offset + 1);
+		question.writeUInt16BE(this.class, offset + 3);
 		return question
 	}
 
