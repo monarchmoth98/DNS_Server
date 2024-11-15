@@ -57,7 +57,11 @@ export class DnsQuestion {
 
 		let offset = 0;
 		for (let i = 0; i < tokens.length; i++) {
-			console.log(tokens[i]);
+			if (tokens[i] === '.') {
+				question.write(tokens[i], offset);
+				offset++;
+				continue;
+			}
 			question.writeUintBE(tokens[i].length, offset, 1);
 			question.write(tokens[i], offset + 1);
 			offset += 1 + tokens[i].length;
