@@ -1,3 +1,5 @@
+import { Buffer } from "node:buffer";
+
 export class DnsHeader {
 	private id: number;
 	private queryResponse: number;
@@ -26,7 +28,7 @@ export class DnsHeader {
 		this.recursionAvailable = 0;
 		this.reserved = 0;
 		this.responseCode = 0;
-		this.questionCount = 0;
+		this.questionCount = 1;
 		this.answerRecordCount = 0;
 		this.authorityRecordCount = 0;
 		this.additionalRecordCount = 0;
@@ -46,7 +48,6 @@ export class DnsHeader {
 		byte |= this.reserved << 3;
 		byte |= this.responseCode << 0;
 
-		console.log("BYTE Data: " + byte);
 		header.writeUint16BE(byte, 2);
 
 		header.writeUint16BE(this.questionCount, 4);
