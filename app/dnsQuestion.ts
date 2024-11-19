@@ -1,65 +1,52 @@
 import { Buffer } from 'buffer';
-
-enum Type {
-	A = 1,
-	NS,
-	MD,
-	MF,
-	CNAME,
-	SOA,
-	MB,
-	MG,
-	MR,
-	NULL,
-	WKS,
-	PTR,
-	HINFO,
-	MINFO,
-	MX,
-	TXT
-}
-
-enum Class {
-	IN = 1,
-	CS,
-	CH,
-	HS
-}
+import { Type, Class } from './enums/index';
 
 export class DnsQuestion {
 	private name: string;
 	private type: Type;
 	private class: Class;
+	private labelSequenceName: Buffer | undefined;
 
 
 	constructor(name: string) {
 		this.name = name
+		this.type = Type.A;
+		this.class = Class.IN;
 	}
 
 	public encode(): Buffer {
 
+		const encodedName = new Uint8Array(this.getNameInLabelSequenceFormat());
+
+		const flags = Buffer.alloc(4);
+		flags.writeUInt16BE(this.type, 0);
+		flags.writeUInt16BE(this.class, 2);
+
+		return Buffer.concat([encodedName, new Uint8Array(flags)]);
+	}
+
+	public getNameInLabelSequenceFormat(): Buffer {
+		if (this.labelSequenceName) {
+			return this.labelSequenceName
+		}
+
 		// encode the name
 		const tokens: string[] = this.name.split('.');
-		const totalLength = 1 + 4 + tokens.reduce((acc, token) => {
+		const nameLength = 1 + tokens.reduce((acc, token) => {
 			return acc + token.length + 1;
 		}, 0);
 
-		const question = Buffer.alloc(totalLength);
-
-		this.type = Type.A;
-		this.class = Class.IN;
+		const labelSequenceName = Buffer.alloc(nameLength);
 
 		let offset = 0;
 		for (let i = 0; i < tokens.length; i++) {
-			question.writeUintBE(tokens[i].length, offset, 1);
+			labelSequenceName.writeUintBE(tokens[i].length, offset, 1);
 			offset++;
-			question.write(tokens[i], offset);
+			labelSequenceName.write(tokens[i], offset);
 			offset += tokens[i].length;
 		}
 
-		question.writeUInt16BE(this.type, offset + 1);
-		question.writeUInt16BE(this.class, offset + 3);
-		return question
+		this.labelSequenceName = labelSequenceName;
+		return labelSequenceName;
 	}
-
 } 

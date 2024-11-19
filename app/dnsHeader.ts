@@ -15,9 +15,7 @@ export class DnsHeader {
 	private authorityRecordCount: number;
 	private additionalRecordCount: number;
 
-	public encode(): Buffer {
-		const header: Buffer = Buffer.alloc(12);
-
+	constructor() {
 		// ID
 		this.id = 1234;
 		this.queryResponse = 1;
@@ -29,13 +27,16 @@ export class DnsHeader {
 		this.reserved = 0;
 		this.responseCode = 0;
 		this.questionCount = 1;
-		this.answerRecordCount = 0;
+		this.answerRecordCount = 1;
 		this.authorityRecordCount = 0;
 		this.additionalRecordCount = 0;
+	};
+
+	public encode(): Buffer {
+		const header: Buffer = Buffer.alloc(12);
 
 		// write the id
 		header.writeUint16BE(this.id, 0);
-
 
 		// create byte from flag
 		let byte = 0;
