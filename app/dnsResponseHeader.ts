@@ -1,6 +1,6 @@
 import { Buffer } from "node:buffer";
 
-export class DnsHeader {
+export class DnsResponseHeader {
 	private id: number;
 	private queryResponse: number;
 	private opcode: number;
@@ -15,14 +15,17 @@ export class DnsHeader {
 	private authorityRecordCount: number;
 	private additionalRecordCount: number;
 
-	constructor() {
+	constructor(id: number, opcode: number, recursionDesired: number) {
+		console.log("ID of response", id);
+		console.log("Opcode of response", opcode);
+		console.log("recursion desired", recursionDesired);
 		// ID
-		this.id = 1234;
+		this.id = id;
 		this.queryResponse = 1;
-		this.opcode = 0;
+		this.opcode = opcode;
 		this.aa = 0;
 		this.truncation = 0;
-		this.recursionDesired = 0;
+		this.recursionDesired = recursionDesired;
 		this.recursionAvailable = 0;
 		this.reserved = 0;
 		this.responseCode = 0;
@@ -46,8 +49,8 @@ export class DnsHeader {
 		byte |= this.truncation << 9;
 		byte |= this.recursionDesired << 8;
 		byte |= this.recursionAvailable << 7;
-		byte |= this.reserved << 3;
-		byte |= this.responseCode << 0;
+		byte |= this.reserved << 4;
+		byte |= this.opcode === 0 ? this.responseCode : 4 << 0;
 
 		header.writeUint16BE(byte, 2);
 

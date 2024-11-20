@@ -8,8 +8,9 @@ export class DnsQuestion {
 	private labelSequenceName: Buffer | undefined;
 
 
-	constructor(name: string) {
-		this.name = name
+	constructor(question: Buffer) {
+		console.log(question);
+		this.name = 'codecrafters.io';
 		this.type = Type.A;
 		this.class = Class.IN;
 	}
