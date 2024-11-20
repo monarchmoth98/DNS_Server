@@ -10,6 +10,9 @@ export class DnsQuestion {
 
 	constructor(question: Buffer) {
 		console.log(question);
+
+		const test = question.subarray(0, -4);
+		console.log(test);
 		this.name = 'codecrafters.io';
 		this.type = Type.A;
 		this.class = Class.IN;
