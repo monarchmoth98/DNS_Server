@@ -15,8 +15,8 @@ if (udpSocket) {
 }
 
 udpSocket.on("message", (data: Buffer, remoteAddr: dgram.RemoteInfo) => {
+	console.log(data.toString('hex'));
 	console.log(data);
-	console.log(data.toString());
 	try {
 		console.log(
 			`Received data from ${remoteAddr.address}:${remoteAddr.port}`,
@@ -28,10 +28,16 @@ udpSocket.on("message", (data: Buffer, remoteAddr: dgram.RemoteInfo) => {
 		const responseHeader = new DnsResponseHeader(header.getId(), header.getOpcode(), header.getRecursionDesired());
 
 		const question = new DnsQuestion(data.subarray(12));
-		const encodedQuestion: Buffer = question.encode();
+		const encodedQuestion = question.encode();
 
 		// Encode the answer
-		const answer = new DnsAnswer(question.getNameInLabelSequenceFormat());
+		const qName = question.getName();
+		const qType = question.getType();
+		const qClass = question.getClass();
+		console.log("qName: ", qName);
+		console.log("qType: ", qType);
+		console.log("qClass: ", qClass);
+		const answer = new DnsAnswer(question.getName(), question.getType(), question.getClass());
 		const encodedAnswer = answer.encode();
 
 		const finalBuffer = Buffer.concat([new Uint8Array(responseHeader.encode()), new Uint8Array(encodedQuestion), new Uint8Array(encodedAnswer)]);

@@ -2,55 +2,40 @@ import { Buffer } from 'buffer';
 import { Type, Class } from './enums/index';
 
 export class DnsQuestion {
-	private name: string;
+	private name: Buffer;
 	private type: Type;
 	private class: Class;
-	private labelSequenceName: Buffer | undefined;
 
 
 	constructor(question: Buffer) {
-		console.log(question);
-
-		const test = question.subarray(0, -4);
-		console.log(test);
-		this.name = 'codecrafters.io';
-		this.type = Type.A;
-		this.class = Class.IN;
+		this.name = question.subarray(0, -4);
+		console.log("Question name: ", this.name);
+		const nameLength = this.name.length;
+		console.log("Name Length", nameLength);
+		this.type = question.readUInt16BE(nameLength);
+		console.log("Question Type: ", this.type);
+		this.class = question.readUint16BE(nameLength + 2);
+		console.log("Question Class: ", this.class);
 	}
 
 	public encode(): Buffer {
-
-		const encodedName = new Uint8Array(this.getNameInLabelSequenceFormat());
-
 		const flags = Buffer.alloc(4);
-		flags.writeUInt16BE(this.type, 0);
+		flags.writeUInt16BE(this.type);
 		flags.writeUInt16BE(this.class, 2);
-
-		return Buffer.concat([encodedName, new Uint8Array(flags)]);
+		const encodedQuestion = Buffer.concat([new Uint8Array(this.name), new Uint8Array(flags)]);
+		console.log("\nEncoded Question: ", encodedQuestion);
+		return encodedQuestion;
 	}
 
-	public getNameInLabelSequenceFormat(): Buffer {
-		if (this.labelSequenceName) {
-			return this.labelSequenceName
-		}
+	public getName(): Buffer {
+		return this.name;
+	}
 
-		// encode the name
-		const tokens: string[] = this.name.split('.');
-		const nameLength = 1 + tokens.reduce((acc, token) => {
-			return acc + token.length + 1;
-		}, 0);
+	public getType() {
+		return this.type;
+	}
 
-		const labelSequenceName = Buffer.alloc(nameLength);
-
-		let offset = 0;
-		for (let i = 0; i < tokens.length; i++) {
-			labelSequenceName.writeUintBE(tokens[i].length, offset, 1);
-			offset++;
-			labelSequenceName.write(tokens[i], offset);
-			offset += tokens[i].length;
-		}
-
-		this.labelSequenceName = labelSequenceName;
-		return labelSequenceName;
+	public getClass() {
+		return this.class;
 	}
 } 

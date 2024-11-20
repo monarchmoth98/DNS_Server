@@ -9,10 +9,10 @@ export class DnsAnswer {
 	private length: number;
 	private data: number[];
 
-	constructor(name: Buffer) {
+	constructor(name: Buffer, type: Type, _class: Class) {
 		this.name = name;
-		this.class = 1;
-		this.type = 1;
+		this.class = _class;
+		this.type = type;
 		this.ttl = 60;
 		this.length = 4;
 		this.data = [8, 8, 8, 8];

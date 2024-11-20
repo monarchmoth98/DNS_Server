@@ -16,9 +16,6 @@ export class DnsResponseHeader {
 	private additionalRecordCount: number;
 
 	constructor(id: number, opcode: number, recursionDesired: number) {
-		console.log("ID of response", id);
-		console.log("Opcode of response", opcode);
-		console.log("recursion desired", recursionDesired);
 		// ID
 		this.id = id;
 		this.queryResponse = 1;
