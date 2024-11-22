@@ -15,7 +15,7 @@ export class DnsResponseHeader {
 	private authorityRecordCount: number;
 	private additionalRecordCount: number;
 
-	constructor(id: number, opcode: number, recursionDesired: number) {
+	constructor(id: number, opcode: number, recursionDesired: number, questionCount: number) {
 		// ID
 		this.id = id;
 		this.queryResponse = 1;
@@ -26,8 +26,8 @@ export class DnsResponseHeader {
 		this.recursionAvailable = 0;
 		this.reserved = 0;
 		this.responseCode = 0;
-		this.questionCount = 1;
-		this.answerRecordCount = 1;
+		this.questionCount = questionCount;
+		this.answerRecordCount = questionCount;
 		this.authorityRecordCount = 0;
 		this.additionalRecordCount = 0;
 	};

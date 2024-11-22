@@ -47,4 +47,8 @@ export class DnsRequestHeader {
 	public getRecursionDesired() {
 		return this.recursionDesired;
 	}
+
+	public getQuestionCount() {
+		return this.questionCount;
+	}
 } 
