@@ -1,7 +1,7 @@
 import * as dgram from "dgram";
 import { Buffer } from "node:buffer";
-import { DnsQuestion } from "./dnsQuestion";
-import { DnsAnswer } from "./dnsAnswer";
+import { DnsQuestions } from "./dnsQuestion";
+import { DnsAnswers } from "./dnsAnswer";
 import { DnsRequestHeader } from "./dnsRequestHeader";
 import { DnsResponseHeader } from "./dnsResponseHeader";
 
@@ -25,19 +25,13 @@ udpSocket.on("message", (data: Buffer, remoteAddr: dgram.RemoteInfo) => {
 		// extract the header from the request:
 		// first 12 bytes are the header. the rest is the request.
 		const header = new DnsRequestHeader(data.subarray(0, 12));
-		const responseHeader = new DnsResponseHeader(header.getId(), header.getOpcode(), header.getRecursionDesired());
+		const responseHeader = new DnsResponseHeader(header.getId(), header.getOpcode(), header.getRecursionDesired(), header.getQuestionCount());
 
-		const question = new DnsQuestion(data.subarray(12));
+		const question = new DnsQuestions(data.subarray(12), header.getQuestionCount());
 		const encodedQuestion = question.encode();
 
 		// Encode the answer
-		const qName = question.getName();
-		const qType = question.getType();
-		const qClass = question.getClass();
-		console.log("qName: ", qName);
-		console.log("qType: ", qType);
-		console.log("qClass: ", qClass);
-		const answer = new DnsAnswer(question.getName(), question.getType(), question.getClass());
+		const answer = new DnsAnswers(question.getQuestions());
 		const encodedAnswer = answer.encode();
 
 		const finalBuffer = Buffer.concat([new Uint8Array(responseHeader.encode()), new Uint8Array(encodedQuestion), new Uint8Array(encodedAnswer)]);
